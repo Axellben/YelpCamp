@@ -13,25 +13,34 @@ mongoose
     console.err(err);
   });
 
-const campGrounds = [
-  {
-    title: "Cascada Duruitoarea",
-    price: "100",
-    description: "Foarte Frumos",
-    location: "Iasi",
-  },
-  {
-    title: "Parcul Herastrau",
-    price: "200",
-    description: "Mai bine ca in Ferentari",
-    location: "Bucuresti",
-  },
-  {
-    title: "Comarna din Sus",
-    price: "50",
-    description: "Ca la mama acasa",
-    location: "Iasi",
-  },
-];
+const seedDB = async () => {
+  await CampGround.deleteMany({});
 
-CampGround.insertMany(campGrounds);
+  const campGrounds = [
+    {
+      title: "Cascada Duruitoarea",
+      price: 100,
+      description: "Foarte Frumos",
+      location: "Iasi",
+      image: "https://source.unsplash.com/collection/483251",
+    },
+    {
+      title: "Parcul Herastrau",
+      price: 200,
+      description: "Mai bine ca in Ferentari",
+      location: "Bucuresti",
+      image: "https://source.unsplash.com/collection/483251",
+    },
+    {
+      title: "Comarna din Sus",
+      price: 50,
+      description: "Ca la mama acasa",
+      location: "Iasi",
+      image: "https://source.unsplash.com/collection/483251",
+    },
+  ];
+
+  await CampGround.insertMany(campGrounds);
+};
+
+seedDB();

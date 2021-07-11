@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
+const ejsMate = require("ejs-mate");
 const CampGround = require("./models/campground");
 
 mongoose
@@ -18,6 +19,7 @@ mongoose
 
 const app = express();
 
+app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -50,8 +52,7 @@ app.get("/campgrounds/:id/edit", async (req, res) => {
 });
 
 app.post("/campgrounds/", async (req, res) => {
-  const { title, location } = req.body.campground;
-  const campground = new CampGround({ title, location });
+  const campground = new CampGround(req.body.campground);
   await campground.save();
   res.redirect(`/campgrounds/${campground._id}`);
 });
@@ -72,8 +73,13 @@ app.put("/campgrounds/:id", async (req, res) => {
 
 app.delete("/campgrounds/:id", async (req, res) => {
   const { id } = req.params;
-  const campground = await CampGround.findByIdAndDelete(id);
+  await CampGround.findByIdAndDelete(id);
   res.redirect(`/campgrounds`);
+});
+
+// Set an 404 route
+app.use((req, res) => {
+  res.status(404).send("404");
 });
 
 app.listen(3000, () => {
