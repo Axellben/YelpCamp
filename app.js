@@ -30,58 +30,93 @@ app.get("/", (req, res) => {
   res.render("home");
 });
 
-app.get("/campgrounds", async (req, res) => {
-  const campgrounds = await CampGround.find({});
-  res.render("campgrounds/index", { campgrounds });
-});
+function wrapAsync(fn) {
+  return function (req, res, next) {
+    fn(req, res, next).catch((e) => {
+      next(e);
+    });
+  };
+}
+
+app.get(
+  "/campgrounds",
+  wrapAsync(async (req, res, next) => {
+    const campgrounds = await CampGround.find({});
+    res.render("campgrounds/index", { campgrounds });
+  })
+);
 
 app.get("/campgrounds/new", (req, res) => {
   res.render("campgrounds/new");
 });
 
-app.get("/campgrounds/:id", async (req, res) => {
-  const { id } = req.params;
-  const campground = await CampGround.findById(id);
-  res.render("campgrounds/show", { campground });
+app.get("/campgrounds/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const campground = await CampGround.findById(id);
+    res.render("campgrounds/show", { campground });
+  } catch (e) {
+    next(e);
+  }
 });
 
-app.get("/campgrounds/:id/edit", async (req, res) => {
-  const { id } = req.params;
-  const campground = await CampGround.findById(id);
-  res.render("campgrounds/edit", { campground });
+app.get("/campgrounds/:id/edit", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const campground = await CampGround.findById(id);
+    res.render("campgrounds/edit", { campground });
+  } catch (e) {
+    next(e);
+  }
 });
 
-app.post("/campgrounds/", async (req, res) => {
-  const campground = new CampGround(req.body.campground);
-  await campground.save();
-  res.redirect(`/campgrounds/${campground._id}`);
+app.post("/campgrounds/", async (req, res, next) => {
+  try {
+    const campground = new CampGround(req.body.campground);
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+  } catch (e) {
+    next(e);
+  }
 });
 
-app.post("/campgrounds/:id", async (req, res) => {
-  const { id } = req.params;
-  const campground = await CampGround.findById(id);
-  res.render("campgrounds/edit", { campground });
+app.post("/campgrounds/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const campground = await CampGround.findById(id);
+    res.render("campgrounds/edit", { campground });
+  } catch (e) {
+    next(e);
+  }
 });
 
-app.put("/campgrounds/:id", async (req, res) => {
-  const { id } = req.params;
-  const campground = await CampGround.findByIdAndUpdate(id, {
-    ...req.body.campground,
-  });
-  res.redirect(`/campgrounds/${campground._id}`);
+app.put("/campgrounds/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const campground = await CampGround.findByIdAndUpdate(id, {
+      ...req.body.campground,
+    });
+    res.redirect(`/campgrounds/${campground._id}`);
+  } catch (e) {
+    next(e);
+  }
 });
 
-app.delete("/campgrounds/:id", async (req, res) => {
-  const { id } = req.params;
-  await CampGround.findByIdAndDelete(id);
-  res.redirect(`/campgrounds`);
+app.delete("/campgrounds/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await CampGround.findByIdAndDelete(id);
+    res.redirect(`/campgrounds`);
+  } catch (e) {
+    next(e);
+  }
 });
 
 // Set an 404 route
 app.use((req, res) => {
-  res.status(404).send("404");
+  res.status(404).render("404");
 });
 
 app.listen(3000, () => {
-  console.log("Serving on port 3000");
+  console.log("Listening on port 3000");
 });
