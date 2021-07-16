@@ -1,23 +1,28 @@
 const mongoose = require("mongoose");
+const Review = require("./review");
+const Schema = mongoose.Schema;
 
 const campGroundSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
   },
   image: {
     type: String,
-    required: true,
   },
   price: {
     type: Number,
-    required: true,
   },
   description: {
     type: String,
-    required: true,
   },
-  location: { type: String, required: true },
+  location: { type: String },
+  reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
+});
+
+campGroundSchema.post("findOneAndDelete", async function (campground) {
+  campground.reviews.forEach(async (review) => {
+    await Review.findOneAndRemove({ _id: review._id });
+  });
 });
 
 const CampGround = mongoose.model("CampGround", campGroundSchema);

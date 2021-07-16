@@ -43,7 +43,9 @@
           type="text"
           id="image"
           name="campground[image]"
+          required
         />
+        <div class="invalid-feedback">Please choose an image.</div>
       </div>
 
       <!-- Description -->
@@ -54,7 +56,9 @@
           type="text"
           id="description"
           name="campground[description]"
+          required
         ></textarea>
+        <div class="invalid-feedback">Please write a description.</div>
       </div>
 
       <!-- Price -->
@@ -70,7 +74,9 @@
             id="price"
             name="campground[price]"
             placeholder="0.00"
+            required
           />
+          <div class="invalid-feedback">Please choose a price.</div>
         </div>
       </div>
 
@@ -81,29 +87,4 @@
 
     <a href="/campgrounds">All Campgrounds</a>
   </div>
-  <script>
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
-    (function () {
-      "use strict";
-
-      // Fetch all the forms we want to apply custom Bootstrap validation styles to
-      var forms = document.querySelectorAll(".needs-validation");
-
-      // Loop over them and prevent submission
-      Array.prototype.slice.call(forms).forEach(function (form) {
-        form.addEventListener(
-          "submit",
-          function (event) {
-            if (!form.checkValidity()) {
-              event.preventDefault();
-              event.stopPropagation();
-            }
-
-            form.classList.add("was-validated");
-          },
-          false
-        );
-      });
-    })();
-  </script>
 </div>
