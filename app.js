@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const session = require("express-session");
 const methodOverride = require("method-override");
+const flash = require("connect-flash");
 const ExpressError = require("./utils/ExpressError");
 const ejsMate = require("ejs-mate");
 
@@ -43,12 +44,18 @@ app.use(
     },
   })
 );
+app.use(flash());
 
-app.get("/", (req, res) => {
-  res.render("home");
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
 });
 
 // Express routes
+app.get("/", (req, res) => {
+  res.render("home");
+});
 
 app.use("/campgrounds", campgrounds);
 app.use("/campgrounds/:id/reviews", reviews);
