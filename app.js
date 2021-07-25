@@ -6,15 +6,21 @@ const methodOverride = require("method-override");
 const flash = require("connect-flash");
 const ExpressError = require("./utils/ExpressError");
 const ejsMate = require("ejs-mate");
+const passport = require("passport");
+const localStrategy = require("passport-local");
+const User = require("./models/user");
 
-const campgrounds = require("./routes/campgrounds");
-const reviews = require("./routes/reviews");
+// Routes
+const campgroundsRoutes = require("./routes/campgrounds");
+const reviewsRoutes = require("./routes/reviews");
+const usersRoutes = require("./routes/users");
 
 // Connect to the database
 mongoose
   .connect("mongodb://localhost:27017/YelpCamp", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useCreateIndex: true,
   })
   .then(() => {
     console.log("We're connected to MongoDB");
@@ -45,20 +51,30 @@ app.use(
   })
 );
 app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new localStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
+  res.locals.user = req.user;
   next();
 });
 
 // Express routes
+
 app.get("/", (req, res) => {
   res.render("home");
 });
 
-app.use("/campgrounds", campgrounds);
-app.use("/campgrounds/:id/reviews", reviews);
+app.use("/campgrounds", campgroundsRoutes);
+app.use("/campgrounds/:id/reviews", reviewsRoutes);
+app.use("/", usersRoutes);
 
 // Set an 404 route
 app.all("*", (req, res, next) => {
