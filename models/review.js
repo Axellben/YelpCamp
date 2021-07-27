@@ -8,6 +8,10 @@ const reviewSchema = new Schema({
   comment: {
     type: String,
   },
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 const Review = mongoose.model("Review", reviewSchema);
