@@ -5,18 +5,7 @@ const Review = require("../models/review");
 const CampGround = require("../models/campground");
 
 const catchAsync = require("../utils/catchAsync");
-const ExpressError = require("../utils/ExpressError");
-
-const { reviewSchema } = require("../schemas");
-
-const validateReview = (req, res, next) => {
-  const result = reviewSchema.validate(req.body);
-  if (result.error) {
-    throw new ExpressError(result.error, 400);
-  } else {
-    next();
-  }
-};
+const { validateReview } = require("../middleware");
 
 router.post(
   "/",

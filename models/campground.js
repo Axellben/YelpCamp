@@ -17,6 +17,7 @@ const campGroundSchema = new mongoose.Schema({
   },
   location: { type: String },
   reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
+  author: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
 campGroundSchema.post("findOneAndDelete", async function (campground) {
