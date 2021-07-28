@@ -49,7 +49,14 @@ module.exports.updateCampground = async (req, res, next) => {
 module.exports.createCampground = async (req, res, next) => {
   const campground = new CampGround(req.body.campground);
   campground.author = req.user._id;
+
+  // Save image details to the campground
+  req.files.forEach((file) => {
+    campground.images.push({ url: file.path, filename: file.filename });
+  });
+
   await campground.save();
+  console.log(campground);
   req.flash("success", "Campground created!");
   res.redirect(`/campgrounds/${campground._id}`);
 };
