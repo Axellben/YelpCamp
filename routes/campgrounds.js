@@ -27,7 +27,12 @@ router
   // Route to get a campground by id
   .get(catchAsync(campgrounds.showCampground))
   // Route to handle the PUT request to update a campground
-  .put(isAuthor, validateCampground, catchAsync(campgrounds.updateCampground))
+  .put(
+    isAuthor,
+    upload.array("image"),
+    validateCampground,
+    catchAsync(campgrounds.updateCampground)
+  )
   // Route to handle the DELETE request to delete a campground
   .delete(isAuthor, catchAsync(campgrounds.deleteCampground));
 
