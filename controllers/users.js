@@ -14,7 +14,6 @@ module.exports.createUser = async (req, res, next) => {
         next(errr);
       }
     });
-    console.log(`Registered user: ${registeredUser}`);
     req.flash("success", "Registration successful!");
     res.redirect("/campgrounds");
   } catch (err) {

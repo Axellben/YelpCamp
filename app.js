@@ -13,6 +13,8 @@ const ejsMate = require("ejs-mate");
 const passport = require("passport");
 const localStrategy = require("passport-local");
 const User = require("./models/user");
+const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
 
 // Routes
 const campgroundsRoutes = require("./routes/campgrounds");
@@ -42,8 +44,15 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(mongoSanitize());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 app.use(
   session({
+    name: "session",
     secret: "keyboard cat",
     resave: false,
     saveUninitialized: true,

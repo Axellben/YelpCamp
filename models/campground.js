@@ -8,20 +8,40 @@ ImageSchema.virtual("thumbnail").get(function () {
   return this.url.replace("/upload/", "/upload/w_200/");
 });
 
-const campGroundSchema = new mongoose.Schema({
-  title: {
-    type: String,
+const opts = { toJSON: { virtuals: true } };
+
+const campGroundSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+    },
+    images: [ImageSchema],
+    geometry: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        required: true,
+      },
+      coordinates: {
+        type: [Number],
+        required: true,
+      },
+    },
+    price: {
+      type: Number,
+    },
+    description: {
+      type: String,
+    },
+    location: { type: String },
+    reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
+    author: { type: Schema.Types.ObjectId, ref: "User" },
   },
-  images: [ImageSchema],
-  price: {
-    type: Number,
-  },
-  description: {
-    type: String,
-  },
-  location: { type: String },
-  reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
-  author: { type: Schema.Types.ObjectId, ref: "User" },
+  opts
+);
+
+campGroundSchema.virtual("properties.popUpMarker").get(function () {
+  return `<strong><a href="/campgrounds/${this._id}">${this.title}</a></strong>`;
 });
 
 campGroundSchema.post("findOneAndDelete", async function (campground) {
