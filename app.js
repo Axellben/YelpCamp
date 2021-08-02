@@ -15,15 +15,20 @@ const localStrategy = require("passport-local");
 const User = require("./models/user");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
+const MongoStore = require("connect-mongo");
 
 // Routes
 const campgroundsRoutes = require("./routes/campgrounds");
 const reviewsRoutes = require("./routes/reviews");
 const usersRoutes = require("./routes/users");
 
+const dbUrl =
+  process.env.NODE_ENV !== "production"
+    ? "mongodb://localhost:27017/YelpCamp"
+    : process.env.DB_URL;
 // Connect to the database
 mongoose
-  .connect("mongodb://localhost:27017/YelpCamp", {
+  .connect(dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
@@ -50,8 +55,20 @@ app.use(
     contentSecurityPolicy: false,
   })
 );
+
+const store = new MongoStore({
+  mongoUrl: dbUrl,
+  secret: "keyboard cat",
+  touchAfter: 24 * 60 * 60,
+});
+
+store.on("error", function (e) {
+  console.log(e);
+});
+
 app.use(
   session({
+    store: store,
     name: "session",
     secret: "keyboard cat",
     resave: false,
@@ -102,6 +119,6 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log("Listening on port 3000");
 });
